@@ -6,7 +6,11 @@ This is yet another set of installation scripts for AppImages. The difference? A
 
 ## I can explain...
 
-My distribution is a live system, which is more or less what people call nowadays an "immutable system". Updating or adding new software through the package manager can be very time consuming and frustrating, so at first I came up with the idea of just bundling AppImages into the system and then compressing it. However, due to how compression works, the size of the resulting SQUASHFS image increased drammatically with each new AppImage I added to my system, because they were not being compressed. At first I was willing to get on with it, but I kept adding more and more AppImages into my system, increasing the size by a lot. So I came up with the idea of decompressing the AppImages and then let mksquashfs do the compression on everything, and the results were very positive
+My distribution is a live system, which is more or less what people call nowadays an "immutable system". Updating or adding new software through the package manager can be very time consuming and frustrating, so at first I came up with the idea of just bundling AppImages into the system and then compressing it However, due to how compression works, the size of the resulting SQUASHFS image increased drammatically with each new AppImage I added to my system, because they were not being compressed. At first It wasn't a problem for me, I knew why the compressed filesystem was getting larger, but I kept adding more and more AppImages into my system, increasing the size by a lot, until I considered "maybe I should to something about this"
+
+Paralel to this, I was getting concerned about the performance of some AppImages and there were also some unexpected issues when running internal scripts from AppImages in side a chroot, for this specific issue  at first I thought that the solution was to permanently mount them or something
+
+So I came up with the idea of decompressing the AppImages and then let mksquashfs do the compression on everything, and the results were very positive
 
 # Size comparison
 
