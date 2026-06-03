@@ -28,4 +28,4 @@ In the following picture I mounted both filesystems to analyze the real size of 
 
 The SQUASHFS compressed filesystem with bundled appimages (File A) is heavier, because AppImages are files that are already compressed and MKSQUASHFS cannot compress them when building the filesystem image
 
-The SQUASHFS compressed filesystem with decompressed AppImages (File B) is lighter, in this case even with almost 4 times the occupied size in AppImages, this is because MKSQUASHFS is taking care of the compression of the entire filesystem including the applications that are provided as AppImages
+The SQUASHFS compressed filesystem with decompressed AppImages (File B) is lighter, in this case even with almost 4 times the occupied size in AppImages, this is because MKSQUASHFS compressed the entire filesystem including the applications that are provided as AppImages
