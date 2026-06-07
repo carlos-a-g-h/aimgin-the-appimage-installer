@@ -40,6 +40,8 @@ This is just yet another way to use AppImages, again, NOT recommended for tradit
 
 Watch a video [here](https://archive.org/download/appimage_installer_sh/appImage_installer_demo_by_carlos-a-g-h.mp4)
 
+The video was uploaded to [archive dot org](https://archive.org/details/appimage_installer_sh)
+
 ### Requirements
 
 The requirements depend on how much you want to do. If you want the full experience, install "yad" (for the UI), "wget" (to grab files from the internet using the UI) and "squashfs-tools" (for dealing with SQUASHFS files)
