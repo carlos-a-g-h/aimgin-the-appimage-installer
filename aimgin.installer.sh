@@ -12,87 +12,109 @@
 # Do not create symlinks to /usr/bin/
 #
 # ANY_AIMG
-# Use general installation method for any AppImage
-# It may be forced to 1 in case some specific files aren't found
+# Use general installation strategy for any AppImage
+# It may be forced to 1 automatically in case some specific files aren't found
 
-# DNC
-# Used by the previous step (the extractor)
-# Do not set this env var manually for this specific step, this env var being
-# used as a reference to wether print or to not print certain things on screen
+# AIMG_DESKTOP
+# Absolute file path or name of the dot Desktop file
+# If it's not given, it will be obtained during this step
 
+if [ -z "$DEBUG" ];then DEBUG=0;fi
+if [ $DEBUG -eq 1 ]
+then
+	set -x
+fi
+
+if [ -z "$APPSDIR" ];then APPSDIR="/usr/appimages";fi
 if [ -z "$NO_SYMLINKS" ];then NO_SYMLINKS=0; fi
 if [ -z "$ANY_AIMG" ];then ANY_AIMG=0; fi
-if [ -z "$DNC" ];then DNC=0; fi
+if [ -z "$AIMG_DESKTOP" ];then AIMG_DESKTOP=0; fi
 
-set -e
+IS_MAINPROC=0
+TMP=$(basename "$0")
+if [ -z "$MAINPROC" ]
+then
+	MAINPROC="$TMP"
+	IS_MAINPROC=1
+fi
+if [ $IS_MAINPROC -eq 0 ]
+then
+	if [ $(echo "$MAINPROC"|grep "$TMP"|wc -c) -gt 0 ]
+	then
+		IS_MAINPROC=1
+	fi
+fi
+
+# Essential functions
+
+function _util_assert() {
+	EC=$1
+	MSG=""
+	if [ $# -eq 1 ];then MSG="[ E.Code: ""$EC ]";fi
+	if [ $# -eq 2 ];then MSG="[ E.Code: ""$EC"" ] ""$2";fi
+	echo "$MSG"
+	if [ $EC -eq 0 ];then return 0;fi
+	exit $EC
+}
+
+function _util_explode() {
+	echo "[!] ""$1"
+	exit 1
+}
 
 # Argument 1: AppImage Name
 AIMG_NAME="$1"
 
 # Argument 2: Decompressed AppDir
 AIMG_APPDIR="$(realpath -e $2)"
+_util_assert $?
 
-# find dot desktop file
-
-SRC_DESKTOP_RAW=""
-if [ $(ls "$AIMG_APPDIR"|grep ".desktop$"|wc -l) -eq 1 ]
-then
-	SRC_DESKTOP_RAW=$(ls "$AIMG_APPDIR"|grep ".desktop$"|sed -n 1p)
-fi
-if [ -z "$SRC_DESKTOP_RAW" ]; then exit 1; fi
-SRC_DESKTOP=$(realpath -e "$AIMG_APPDIR"/"$SRC_DESKTOP_RAW")
-
-# determine entrypoint
-
-# TODO: pull out the main binary name from the .desktop file and use it
-# as a pattern for replacing it with the path that leads to the AppRun
-
-# $SRC_DESKTOP
-
-# AIMG_EPOINT=""
+# Variables
 
 AIMG_APPRUN="$AIMG_APPDIR"/AppRun
-
-
-# install using setup script
-
 SH_SETUP="$AIMG_APPDIR"/bin/setup
+if ! [ -f "$SH_SETUP" ]; then ANY_AIMG=1;fi
+
+# Functions
+
+function _get_AIMG_DESKTOP() {
+
+	# Get AIMG_DESKTOP (if not provided through ENV)
+
+	if ! [ -z "$AIMG_DESKTOP" ]
+	then
+		echo "[!] AIMG_DESKTOP already provided: $AIMG_DESKTOP"
+		return 0
+	fi
+
+	SEL_APPDIR="$AIMG_APPDIR"
+	if ! [ $(find "$SEL_APPDIR"|grep ".desktop$"|wc -l) -eq 1 ]; then _util_explode "Desktop file not found???";fi
+	TMP=$(find "$SEL_APPDIR"|grep ".desktop$"|head -n1)
+	AIMG_DESKTOP=$(realpath -e "$TMP")
+}
+
+###############################################################################
+
+set -e
+
+_get_AIMG_DESKTOP
+
+# Install application using the internal setup script
 
 if [ $ANY_AIMG -eq 0 ]
 then
-
-	if ! [ -f "$SH_SETUP" ]; then ANY_AIMG=1;fi
-
-	if [ $ANY_AIMG -eq 0 ]
+	export APPDIR="$AIMG_APPDIR"
+	if [ "$NO_SYMLINKS" -eq 1 ]
 	then
-		export APPDIR="$AIMG_APPDIR"
-		if [ "$NO_SYMLINKS" -eq 1 ]
-		then
-			export URUNTIME="$AIMG_APPRUN"
-			"$SH_SETUP" --install --force --no-links
-		else
-			export URUNTIME=""
-			"$SH_SETUP" --install --force
-		fi
+		export URUNTIME="$AIMG_APPRUN"
+		"$SH_SETUP" --install --force --no-links
+	else
+		export URUNTIME=""
+		"$SH_SETUP" --install --force
 	fi
-
-	# if [ -f "$SH_SETUP" ]
-	# then
-	# 	export APPDIR="$AIMG_APPDIR"
-	# 	if [ "$NO_SYMLINKS" -eq 1 ]
-	# 	then
-	# 		export URUNTIME="$AIMG_APPRUN"
-	# 		"$SH_SETUP" --install --force --no-links
-	# 	else
-	# 		export URUNTIME=""
-	# 		"$SH_SETUP" --install --force
-	# 	fi
-	# else
-	# 	ANY_AIMG=1
-	# fi
 fi
 
-# install any kind of appimage
+# install application using general strategy
 
 if [ $ANY_AIMG -eq 1 ]
 then
@@ -107,7 +129,7 @@ then
 	SRC_DIRICON=$(realpath -e "$AIMG_APPDIR"/".DirIcon")
 	SRC_DIRICON_NAME=$(basename "$SRC_DIRICON")
 
-	if [ "$SRC_DIRICON_NAME" == ".DirIcon" ]
+	if ! [ "$SRC_DIRICON_NAME" == ".DirIcon" ]
 	then
 
 		ICON_FILENAME="$SRC_DIRICON_NAME"
@@ -123,37 +145,42 @@ then
 			if [ $(echo "$WTFIT"|grep "$CONST_SVG"|wc -l) -gt 0 ];then ICON_FILENAME=".svg";fi
 			if [ $(echo "$WTFIT"|grep "$CONST_XPM"|wc -l) -gt 0 ];then ICON_FILENAME=".xpm";fi
 		fi
-		if [ -z "$ICON_FILENAME" ]
-		then
-			echo "Unable to get the file format of the icon file"
-			exit 1
-		fi
+		if [ -z "$ICON_FILENAME" ];then _util_explode "Unable to get the file format of the icon file";fi
 
-		LINE_ICON=$(awk "/^Icon=/" "$SRC_DESKTOP"|head -n1)
+		ICON_STEM=""
+		LINE_ICON=$(awk "/^Icon=/" "$AIMG_DESKTOP"|head -n1)
 		if ! [ -z "$LINE_ICON" ]
 		then
-			echo "x"
-			# len("Icon=") = 5
-			ICON_FILENAME="${LINE_ICON:5}""$ICON_FILENAME"
+			ICON_STEM=$(echo "$LINE_ICON"|sed 's/^Icon=//')
+			ICON_FILENAME="$ICON_STEM""$ICON_FILENAME"
 		else
 			ICON_FILENAME="$AIMG_NAME""$ICON_FILENAME"
 		fi
-
 	fi
 
-	if [ -z "$ICON_FILENAME" ]
-	then
-		"Icon filename unknown"
-		exit 1
-	fi
+	if [ -z "$ICON_FILENAME" ];then _util_explode "Icon filename unknown";fi
 
 	echo "ICON:$ICON_FILENAME:$SRC_DIRICON"
+	cp -va "$SRC_DIRICON" "/usr/share/icons/""$ICON_FILENAME"
 
 	# Copy desktop file
 
-	
+	TMP=$(basename "$AIMG_DESKTOP")
+	DESKTOP_OK="/usr/share/applications/""$TMP"
+	# cp -va "$AIMG_DESKTOP" "$DESKTOP_OK"
 
+	# Replace Exec with AppRun
 
+	TMP=$(cat "$AIMG_DESKTOP"|grep "^Exec="|head -n1)
+
+	cat "$AIMG_DESKTOP"|sed 's:'"$TMP"':Exec='"$AIMG_APPRUN"':' > "$DESKTOP_OK"
+
+	# cp -va "$AIMG_DESKTOP" "$DESKTOP_OK"
+	# sed -i 's:'"$TMP"':Exec='"$AIMG_APPRUN"':' "$DESKTOP_OK"
+	chmod +x "$DESKTOP_OK"
 fi
 
-# TODO: finish this
+if [ $IS_MAINPROC -eq 1 ]
+then
+	echo "[!] Installed: $AIMG_NAME"
+fi
