@@ -1,0 +1,8 @@
+[Desktop Entry]
+Version=1.0
+Type=Application
+Terminal=true
+StartupNotify=false
+Name=AppImage Installer
+Icon=applications-other
+Exec=./aimgin.ui_yad.sh
