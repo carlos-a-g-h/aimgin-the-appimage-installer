@@ -284,7 +284,7 @@ then
 		--width=480 --height=240 \
 		--escape-ok \
 		--window-icon="$UI_ICON" \
-		--text "SUCCESSFULLY INSTALLED: $AIMG_NAME" \
+		--text "SUCCESSFULLY INSTALLED THE APPLICATION\n\nName: $AIMG_NAME\n\nPath: $AIMG_APPDIR" \
 		--button="OK"
 
 	rm "$CACHEDIR"/results.*
