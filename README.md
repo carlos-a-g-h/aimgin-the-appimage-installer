@@ -1,4 +1,4 @@
-# AppImage "Installer"
+# AIMGIN: The AppImage "Installer"
 
 ## About this repo
 
