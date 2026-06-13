@@ -11,11 +11,11 @@ DPATH_DESK="/usr/share/applications"
 
 mkdir -vp "$DPATH_INST"
 
-cp -va aimgin.*.sh "$DPATH_INST"
+cp -va aimgin.*.sh "$DPATH_INST"/
 
 chmod +x "$DPATH_INST"/aimgin.*
 
-cp -va aimgin.desktop "$DPATH_DESK"/applications/
+cp -va aimgin.desktop "$DPATH_DESK"/
 
 chmod +x "$DPATH_DESK"/aimgin.desktop
 
