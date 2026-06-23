@@ -18,20 +18,28 @@ CACHEDIR="/tmp/aimgin.cache"
 
 ################################################################################
 
-set -e
-
+# Debug mode?
 if [ -z "$DEBUG" ];then DEBUG=0;fi
 if [ $DEBUG -eq 1 ]
 then
+	echo "[!] Activated Debug Mode"
 	set -x
 fi
 
-USE_YAD=0
-if [ -z "$DISPLAY" ]
+# Determine wether to use or not use YAD
+if [ -z "$USE_YAD" ]; then USE_YAD=1
+if [ $USE_YAD -eq 1 ]
 then
-	echo "[!] Not running on a graphical environment"
-else
-	if [ -x /usr/bin/yad ]; then USE_YAD=1; fi
+	if ! [ -x /usr/bin/yad ]
+	then
+		echo "[!] YAD not found/installed"
+		USE_YAD=0
+	fi
+	if [ $USE_YAD -eq 1 ] && [ -z "$DISPLAY" ]
+	then
+		echo "[!] Not running on a graphical environment"
+		USE_YAD=0
+	fi
 fi
 
 mkdir -vp "$CACHEDIR"
