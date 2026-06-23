@@ -27,7 +27,7 @@ then
 fi
 
 # Determine wether to use or not use YAD
-if [ -z "$USE_YAD" ]; then USE_YAD=1
+if [ -z "$USE_YAD" ]; then USE_YAD=1;fi
 if [ $USE_YAD -eq 1 ]
 then
 	if ! [ -x /usr/bin/yad ]
