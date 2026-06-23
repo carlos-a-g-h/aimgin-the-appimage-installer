@@ -6,5 +6,5 @@ StartupNotify=false
 Name=AIMGIN Setup. Installer
 Comment=Install AIMGIN
 Icon=applications-other
-Exec=bash -ic "export INTERACTIVE=1;./Setup.Install.sh"
+Exec=bash -ic "export INTERACTIVE=1;chmod +x ./Setup.Install.sh;./Setup.Install.sh"
 Categories=System;Other;

@@ -6,5 +6,5 @@ StartupNotify=false
 Name=AIMGIN Setup. Uninstaller
 Comment=Uninstalls AIMGIN from your system
 Icon=applications-other
-Exec=bash -ic "export INTERACTIVE=1;./Setup.Uninstall.sh"
+Exec=bash -ic "export INTERACTIVE=1;chmod +x ./Setup.Uninstall.sh;./Setup.Uninstall.sh"
 Categories=System;Other;
