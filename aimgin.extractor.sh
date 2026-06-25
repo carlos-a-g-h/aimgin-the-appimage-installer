@@ -45,8 +45,8 @@ if [ -z "$AIMG_NAME" ];then AIMG_NAME=""; fi
 if [ -z "$DNC" ];then DNC=0; fi
 if [ -z "$FORCE" ];then FORCE=0; fi
 
-if [ -z "$APPSDIR" ];then APPSDIR="/usr/appimages";fi
-if [ -z "$CACHEDIR" ];then APPSDIR="/tmp/aimgin.cache";fi
+if [ -z "$IAPPSDIR" ];then IAPPSDIR="/usr/appimages";fi
+if [ -z "$CACHEDIR" ];then CACHEDIR="/var/cache/aimgin";fi
 if [ -z "$WRITE_RESULTS" ];then WRITE_RESULTS=0;fi
 
 IS_MAINPROC=0
@@ -94,19 +94,22 @@ function _action_Get_TMP() {
 
 	TMP=$(echo "$AIMG_FILEPATH"|md5sum|head -n1)
 	TMP_NAME="${TMP:0:32}"
-	TMP_DIR="$APPSDIR"/"$TMP_NAME"
+	TMP_DIR="$IAPPSDIR"/"$TMP_NAME"
 
 }
 
 AIMG_DESKTOP=""
 function _action_Get_AIMG_DESKTOP() {
 
-	SEL_APPDIR="$TMP_DIR"
+	SEL_APPDIR="$1"
+	# SEL_APPDIR="$TMP_DIR"
 
 	QTTY=$(ls "$SEL_APPDIR"|grep ".desktop$"|wc -l)
 	if ! [ $QTTY -eq 1 ]; then _util_explode "Desktop file not found??? (from extractor)";fi
 	XXX=$(ls "$SEL_APPDIR"|grep ".desktop$"|head -n1)
 	AIMG_DESKTOP=$(realpath -e "$SEL_APPDIR"/"$XXX")
+
+	echo "_action_Get_AIMG_DESKTOP:$AIMG_DESKTOP"
 }
 
 AIMG_APPDIR=""
@@ -150,6 +153,8 @@ function _action_Get_AIMG_NAME() {
 	# As a last method, use the filename as THE name for the app
 
 	AIMG_NAME=$(basename "$AIMG_FILEPATH")
+
+	echo "_action_Get_AIMG_NAME:$AIMG_NAME"
 }
 
 function _action_Decompress() {
@@ -219,14 +224,17 @@ function _action_Decompress() {
 	fi
 	if [ -z "$TMP" ]; then _util_explode "I cant't find the decompressed AppImage, wtf";fi
 	if [ -d "$TMP_DIR" ]; then rm -rf $TMP_DIR; fi
+
+	echo "MOV:$TMP:$TMP_DIR"
 	mv -f -T "$TMP" "$TMP_DIR"
+
 }
 
 ###############################################################################
 
 set -e
 
-mkdir -vp "$APPSDIR"
+mkdir -vp "$IAPPSDIR"
 
 _action_Get_TMP
 
@@ -248,7 +256,7 @@ TMP=$(realpath -e "$0")
 TMP1=$(dirname "$TMP")
 NEXT_STEP="$TMP1"/"aimgin.installer.sh"
 
-_action_Get_AIMG_DESKTOP
+_action_Get_AIMG_DESKTOP "$TMP_DIR"
 
 _action_Get_AIMG_NAME
 
@@ -257,19 +265,25 @@ _action_Get_AIMG_NAME
 TMP=$(echo "$AIMG_NAME"|sed -e 's/ /_/g' -e 's/:/_/g' -e 's:/:_:g')
 AIMG_NAME="$TMP"
 
-# Rename AppDIr
+# Rename AppDir using real App Name
 
-AIMG_APPDIR="$APPSDIR"/"$AIMG_NAME"".installed"
+AIMG_APPDIR="$IAPPSDIR"/"$AIMG_NAME"".installed"
 if [ -d "$AIMG_APPDIR" ]; then rm -rf "$AIMG_APPDIR";fi
 mv -v -T "$TMP_DIR" "$AIMG_APPDIR"
+
+echo "Renamed AppDir:$TMP_DIR:$AIMG_APPDIR"
 
 # Adapt AIMG_DESKTOP variable to the new AppDir
 
 echo "CONVERTING..."
-echo "FROM:$AIMG_DESKTOP"
-TMP=$(echo "$AIMG_DESKTOP"|sed "s:$TMP_NAME:$AIMG_NAME.installed:g")
-AIMG_DESKTOP=$(echo "$TMP"|head -n1)
-echo "TO:$AIMG_DESKTOP"
+echo "  FROM:$AIMG_DESKTOP"
+
+# TMP=$(echo "$AIMG_DESKTOP"|sed "s:$TMP_NAME:$AIMG_NAME.installed:g")
+# AIMG_DESKTOP=$(echo "$TMP"|head -n1)
+
+_action_Get_AIMG_DESKTOP "$AIMG_APPDIR"
+
+echo "  TO:$AIMG_DESKTOP"
 
 # Write known results
 
@@ -289,7 +303,7 @@ export AIMG_NAME
 export AIMG_DESKTOP
 
 export CACHEDIR
-export APPSDIR
+export IAPPSDIR
 export MAINPROC
 export WRITE_RESULTS
 

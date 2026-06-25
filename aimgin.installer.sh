@@ -32,8 +32,8 @@ if [ -z "$NO_SYMLINKS" ];then NO_SYMLINKS=0; fi
 if [ -z "$ANY_AIMG" ];then ANY_AIMG=0; fi
 if [ -z "$AIMG_DESKTOP" ];then AIMG_DESKTOP=0; fi
 
-if [ -z "$APPSDIR" ];then APPSDIR="/usr/appimages";fi
-if [ -z "$CACHEDIR" ];then APPSDIR="/tmp/aimgin.cache";fi
+if [ -z "$IAPPSDIR" ];then IAPPSDIR="/usr/appimages";fi
+if [ -z "$CACHEDIR" ];then CACHEDIR="/var/cache/aimgin";fi
 if [ -z "$WRITE_RESULTS" ];then WRITE_RESULTS=0;fi
 
 

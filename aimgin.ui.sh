@@ -11,10 +11,10 @@
 echo "PWD is: $PWD"
 
 # Installation directory (you can change this)
-APPSDIR="/usr/appimages"
+IAPPSDIR="/usr/appimages"
 
 # Cache directory (it should match the $PWD)
-CACHEDIR="/tmp/aimgin.cache"
+CACHEDIR="/var/cache/aimgin"
 
 ################################################################################
 
@@ -404,7 +404,7 @@ export ANY_AIMG=$CHK_ANYIMG
 export DNC=0
 export FORCE=1
 
-export APPSDIR
+export IAPPSDIR
 export MAINPROC
 export CACHEDIR
 export WRITE_RESULTS=1

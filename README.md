@@ -2,7 +2,9 @@
 
 ## About this repo
 
-I made an installer for AppImages, that is composed of two main scripts. These scripts install an AppImage by decompressing it and integrating it to the system. They can work with AppImages and AppDirs compressed as SQUASHFS files
+I made an installer for AppImages. The AppImages are installed by decompressing them into a system and integrating the application
+
+AIMGIN can work with AppImages and SQUASHFS compressed AppDirs
 
 For the sake of not repeating myself throughout this README file, I will refer to both AppImages and AppDirs compressed as SQUASHFS files as "application files" or "app files"
 
@@ -32,7 +34,7 @@ The SQUASHFS compressed filesystem with decompressed AppImages (File B) is light
 
 ### Conclusion
 
-This is just yet another way to use AppImages, again, NOT recommended for traditional systems due to disk space usage, but you can use it in a traditional setup if you think disk space is cheap (if you already use Flatpaks or Snaps, you probably already think like that lmao)
+This is just yet another way to use AppImages, again, NOT recommended for traditional systems due to disk space usage, but you can use it in a traditional setup if you think disk space is cheap (if you already use Flatpaks or Snaps, you probably already think like that lol)
 
 ## How to use
 
@@ -40,36 +42,50 @@ This is just yet another way to use AppImages, again, NOT recommended for tradit
 
 Watch a video [here](https://archive.org/download/appimage_installer_sh/appImage_installer_demo_by_carlos-a-g-h.mp4)
 
-The video was uploaded to [archive dot org](https://archive.org/details/appimage_installer_sh)
+The video was uploaded to [the internet achive](https://archive.org/details/appimage_installer_sh) as well as this repo
 
 ### Requirements
 
 The requirements depend on how much you want to do. If you want the full experience, install "yad" (for a GUI instead of a TUI), "wget" (to grab files from the internet using the UI) and "squashfs-tools" (for dealing with SQUASHFS files)
 
-### Installation instructions
+### Simple installation and usage instructions
 
 Step 1: [Download the repo](https://github.com/carlos-a-g-h/aimgin-the-appimage-installer/archive/refs/heads/main.zip) or git clone it and unzip it
 
-Step 2: Run "Setup.Install.desktop"
+Step 2: Run "Setup.Install.desktop" to install aimgin
 
-Step 3: Run "aimgin.desktop" or "AIMGIN, The AppImage Installer" from your DE's app launcher
+Step 3: Run "aimgin.desktop" or "AIMGIN, The AppImage Installer" from your app launcher
 
-### Hard mode
+AIMGIN will be installed in /usr/lib/aimgin
+
+You can uninstall AIMGIN by running "Setup.Uninstall.desktop"
+
+### The scripts
+
+This part of the readme and below is only if you're interested in using the AIMGIN scripts from the commandline, mainly for unnatended installations
+
+There are 3 main scripts: The UI script, the extractor script and the Installer script
 
 #### Extractor script
 
-aimgin.extractor.sh [FilePath]
+$ /usr/lib/aimgin/aimgin.extractor.sh [FilePath]
 
-The extractor script extracts the contents of the application file. After extracting, the script will run the installer script
+The extractor script extracts the contents of the application file. After extracting, the script will run the Installer script automatically
 
 "FilePath" is a path that leads to the application file, wether it's a normal AppImage or a SQUASHFS file
 
 #### Installer script
 
-aimgin.installer.sh [Name] [AppDir]
+$ /usr/lib/aimgin/aimgin.installer.sh [Name] [AppDir]
 
-Performs the installation of an extracted application
+Performs the installation of an already extracted application, preferrably by the Extractor script
 
 "Name" is the name for the application, make sure it does not have any special characters such as spaces or slashes
 
 "AppDir" is the path to an AppDir
+
+#### It's not that hard, actually
+
+If you're on a chroot or something inyecting any new AppImages to a system, just run the Extractor script to install an AppImage. Manually running the Extractor and then the Installer should be for debugging purposes
+
+Keep in mind that the UI script is the only part that is capable of downloading applications from the internet, but it's not meant to be used for unnatended installations. So any app files that you need from the Internet, download them sepparately using wget or whatever
