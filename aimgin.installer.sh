@@ -52,8 +52,6 @@ then
 	fi
 fi
 
-CACHEDIR="/tmp/aimgin.cache"
-
 # Essential functions
 
 function _util_assert() {
@@ -199,7 +197,7 @@ then
 
 	TMP="$(realpath -e "$AIMG_APPDIR"/".DirIcon")"
 
-	echo "$TMP" > "$CACHEDIR"/"results.""$ICON_FILEPATH"
+	echo "$TMP" > "$CACHEDIR"/"results.ICON_FILEPATH"
 
 fi
 
