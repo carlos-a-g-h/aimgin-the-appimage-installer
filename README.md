@@ -6,7 +6,7 @@ I made an installer for AppImages. The AppImages are installed by decompressing 
 
 AIMGIN can work with AppImages and SQUASHFS compressed AppDirs
 
-For the sake of not repeating myself throughout this README file, I will refer to both AppImages and AppDirs compressed as SQUASHFS files as "application files" or "app files"
+For the sake of not repeating myself throughout this README file, I will refer to both AppImages and AppDirs compressed as SQUASHFS files as "application" or "apps"
 
 ### Ok, hear me out
 
@@ -14,11 +14,11 @@ We can all aggree that installing AppImages by decompressing them goes against h
 
 ### Size comparisons
 
-For the following real test I had two SQUASHFS filesystems
+For the following real test I had two SQUASHFS filesystems, each holding two different versions of the same OS
 
-- File A, "asere.squashfs" has AppImages directly copied inside it, these are normal AppImage files and they are not decompressed
+- File A, "asere.squashfs" (older version) has AppImages directly copied inside it, these are normal AppImage files and they are not decompressed
 
-- File B, "asere-2026-05-22.squashfs" has all of its AppImages decompressed
+- File B, "asere-2026-05-22.squashfs" (most recent version) has all of its AppImages decompressed
 
 In the following picture, I'm comparing the disk space occupied by two SQUASHFS filesystems
 
@@ -46,7 +46,7 @@ The video was uploaded to [the internet achive](https://archive.org/details/appi
 
 ### Requirements
 
-The requirements depend on how much you want to do. If you want the full experience, install "yad" (for a GUI instead of a TUI), "wget" (to grab files from the internet using the UI) and "squashfs-tools" (for dealing with SQUASHFS files)
+The requirements depend on how much you want to do. If you want the full experience, install "yad" (for a GUI instead of a TUI), "wget" (to grab apps from the internet using the UI) and "squashfs-tools" (for dealing with SQUASHFS files)
 
 ### Simple installation and usage instructions
 
@@ -54,7 +54,7 @@ Step 1: [Download the repo](https://github.com/carlos-a-g-h/aimgin-the-appimage-
 
 Step 2: Run "Setup.Install.desktop" to install aimgin
 
-Step 3: Run "aimgin.desktop" or "AIMGIN, The AppImage Installer" from your app launcher
+Step 3: Run "aimgin.desktop" or "AIMGIN, The AppImage Installer" from your favorite launcher
 
 AIMGIN will be installed in /usr/lib/aimgin
 
@@ -64,7 +64,7 @@ You can uninstall AIMGIN by running "Setup.Uninstall.desktop"
 
 This part of the readme and below is only if you're interested in using the AIMGIN scripts from the commandline, mainly for unnatended installations
 
-There are 3 main scripts: The UI script, the extractor script and the Installer script
+There are 2 main scripts: The the extractor script and the Installer script
 
 #### Extractor script
 
