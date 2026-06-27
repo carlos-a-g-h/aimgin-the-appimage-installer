@@ -199,7 +199,7 @@ then
 
 	TMP="$(realpath -e "$AIMG_APPDIR"/".DirIcon")"
 
-	echo "$TMP" > "$CACHEDIR"/"results.ICON_FILEPATH"
+	echo "$TMP" > "$CACHEDIR"/"results.""$ICON_FILEPATH"
 
 fi
 
